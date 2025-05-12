@@ -1,4 +1,4 @@
-! File generated automatically by O'Mega 3.1.2 release Mar 21 2023
+! File generated automatically by O'Mega 3.1.4 release Nov 08 2023
 !
 !   omega_SM.opt -scatter "e- e+ -> e- nuebar u dbar" -target:parameter_module parameters_sm
 !
@@ -54,6 +54,8 @@ module omega_amplitude
   integer, parameter :: n_cindex = 2
   integer, parameter :: n_flv = 1
   integer, parameter :: n_hel = 64
+  integer, parameter :: n_co = 0
+  integer, parameter :: n_cop = 0
 
   ! NB: you MUST NOT change the value of N_ here!!!
   !     It is defined here for convenience only and must be
@@ -61,6 +63,8 @@ module omega_amplitude
   real(kind=default), parameter :: N_ = 3
   logical, parameter :: F = .false.
   logical, parameter :: T = .true.
+
+  integer, dimension(n_co,n_cop), save, protected :: table_coupling_orders
 
   integer, dimension(n_prt,n_hel), save, protected :: table_spin_states
   data table_spin_states(:,   1) / -1, -1, -1, -1, -1, -1 /
@@ -158,13 +162,14 @@ module omega_amplitude
     type(momentum) :: p1, p2, p3, p4, p5, p6
     type(momentum) :: p12, p123, p124, p125, p126, p13, p134, p135, p136, &
       p24, p34, p56
-    type(spinor) :: owf_d1_1__6, owf_n1_4, owf_l1_1
-    type(conjspinor) :: owf_u1b__1_5, owf_l1b_3, owf_l1b_2
-    type(spinor) :: owf_d1_1__136, owf_d1_1__126, owf_n1_134, owf_n1_124
-    type(conjspinor) :: owf_u1b__1_135, owf_u1b__1_125, owf_l1b_123
-    type(vector) :: owf_a_13, owf_a_12, owf_z_13, owf_z_12, owf_wm_56, &
-      owf_wp_34, owf_wp_24
-    complex(kind=default) :: oks_l1l1bl1n1bu1_1_d1b__1
+    type(spinor) :: owf_fd1_i1_p6, owf_fn1_p4, owf_fl1_p1
+    type(conjspinor) :: owf_fu1b_o1_p5, owf_fl1b_p3, owf_fl1b_p2
+    type(spinor) :: owf_fd1_i1_p136, owf_fd1_i1_p126, owf_fn1_p134, &
+      owf_fn1_p124
+    type(conjspinor) :: owf_fu1b_o1_p135, owf_fu1b_o1_p125, owf_fl1b_p123
+    type(vector) :: owf_fa_p13, owf_fa_p12, owf_fz_p13, owf_fz_p12, &
+      owf_fwm_p56, owf_fwp_p34, owf_fwp_p24
+    complex(kind=default) :: oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1
 
 contains
 
@@ -328,83 +333,94 @@ contains
     do hi = 1, hel_finite
       h = hel_map(hi)
       s = table_spin_states(:,h)
-      owf_l1_1 = u (mass(11), - p1, s(1))
-      owf_l1b_2 = vbar (mass(11), - p2, s(2))
-      owf_l1b_3 = ubar (mass(11), p3, s(3))
-      owf_n1_4 = v (mass(12), p4, s(4))
-      owf_u1b__1_5 = ubar (mass(2), p5, s(5))
-      owf_d1_1__6 = v (mass(1), p6, s(6))
+      owf_fl1_p1 = u (mass(11), - p1, s(1))
+      owf_fl1b_p2 = vbar (mass(11), - p2, s(2))
+      owf_fl1b_p3 = ubar (mass(11), p3, s(3))
+      owf_fn1_p4 = v (mass(12), p4, s(4))
+      owf_fu1b_o1_p5 = ubar (mass(2), p5, s(5))
+      owf_fd1_i1_p6 = v (mass(1), p6, s(6))
       call compute_fusions_0001 ()
       call compute_fusions_0002 ()
       call compute_brakets_0001 ()
-      amp(1,1,h) = oks_l1l1bl1n1bu1_1_d1b__1
+      amp(1,1,h) = oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1
     end do
   end subroutine calculate_amplitudes
   subroutine compute_fusions_0001 ()
-      owf_a_12 = pr_feynman(p12, + v_ff(qlep,owf_l1b_2,owf_l1_1))
-      owf_z_12 = pr_unitarity(p12,mass(23),wd_tl(p12,width(23)),.false., &
-         + va_ff(gnclep(1),gnclep(2),owf_l1b_2,owf_l1_1))
-      owf_a_13 = pr_feynman(p13, + v_ff(qlep,owf_l1b_3,owf_l1_1))
-      owf_z_13 = pr_unitarity(p13,mass(23),wd_tl(p13,width(23)),.false., &
-         + va_ff(gnclep(1),gnclep(2),owf_l1b_3,owf_l1_1))
-      owf_wp_24 = pr_unitarity(p24,mass(24),wd_tl(p24,width(24)),.false., &
-         + vl_ff(gcc,owf_l1b_2,owf_n1_4))
-      owf_wp_34 = pr_unitarity(p34,mass(24),wd_tl(p34,width(24)),.false., &
-         + vl_ff(gcc,owf_l1b_3,owf_n1_4))
-      owf_wm_56 = pr_unitarity(p56,mass(24),wd_tl(p56,width(24)),.false., &
-         + vl_ff(gcc,owf_u1b__1_5,owf_d1_1__6))
-      owf_l1b_123 = pr_psibar(p123,mass(11),wd_tl(p123,width(11)),.false., &
-         + f_fv(qlep,owf_l1b_2,owf_a_13) &
-         + f_fva(gnclep(1),gnclep(2),owf_l1b_2,owf_z_13) &
-         - f_fv(qlep,owf_l1b_3,owf_a_12) &
-         - f_fva(gnclep(1),gnclep(2),owf_l1b_3,owf_z_12))
-      owf_n1_124 = pr_psi(p124,mass(12),wd_tl(p124,width(12)),.false., &
-         + f_vlf(gcc,owf_wp_24,owf_l1_1) &
-         - f_vaf(gncneu(1),gncneu(2),owf_z_12,owf_n1_4))
-      owf_n1_134 = pr_psi(p134,mass(12),wd_tl(p134,width(12)),.false., &
-         + f_vlf(gcc,owf_wp_34,owf_l1_1) &
-         - f_vaf(gncneu(1),gncneu(2),owf_z_13,owf_n1_4))
+      owf_fa_p12 = pr_feynman(p12, + v_ff(qlep,owf_fl1b_p2,owf_fl1_p1))
+      owf_fz_p12 = pr_unitarity(p12,mass(23),wd_tl(p12,width(23)),.false., &
+         + va_ff(gnclep(1),gnclep(2),owf_fl1b_p2,owf_fl1_p1))
+      owf_fa_p13 = pr_feynman(p13, + v_ff(qlep,owf_fl1b_p3,owf_fl1_p1))
+      owf_fz_p13 = pr_unitarity(p13,mass(23),wd_tl(p13,width(23)),.false., &
+         + va_ff(gnclep(1),gnclep(2),owf_fl1b_p3,owf_fl1_p1))
+      owf_fwp_p24 = pr_unitarity(p24,mass(24),wd_tl(p24,width(24)),.false., &
+         + vl_ff(gcc,owf_fl1b_p2,owf_fn1_p4))
+      owf_fwp_p34 = pr_unitarity(p34,mass(24),wd_tl(p34,width(24)),.false., &
+         + vl_ff(gcc,owf_fl1b_p3,owf_fn1_p4))
+      owf_fwm_p56 = pr_unitarity(p56,mass(24),wd_tl(p56,width(24)),.false., &
+         + vl_ff(gcc,owf_fu1b_o1_p5,owf_fd1_i1_p6))
+      owf_fl1b_p123 = pr_psibar(p123,mass(11),wd_tl(p123,width(11)),.false., &
+         + f_fv(qlep,owf_fl1b_p2,owf_fa_p13) &
+         + f_fva(gnclep(1),gnclep(2),owf_fl1b_p2,owf_fz_p13) &
+         - f_fv(qlep,owf_fl1b_p3,owf_fa_p12) &
+         - f_fva(gnclep(1),gnclep(2),owf_fl1b_p3,owf_fz_p12))
+      owf_fn1_p124 = pr_psi(p124,mass(12),wd_tl(p124,width(12)),.false., &
+         + f_vlf(gcc,owf_fwp_p24,owf_fl1_p1) &
+         - f_vaf(gncneu(1),gncneu(2),owf_fz_p12,owf_fn1_p4))
+      owf_fn1_p134 = pr_psi(p134,mass(12),wd_tl(p134,width(12)),.false., &
+         + f_vlf(gcc,owf_fwp_p34,owf_fl1_p1) &
+         - f_vaf(gncneu(1),gncneu(2),owf_fz_p13,owf_fn1_p4))
   end subroutine compute_fusions_0001
   subroutine compute_fusions_0002 ()
-      owf_u1b__1_125 = pr_psibar(p125,mass(2),wd_tl(p125,width(2)),.false., &
-         - f_fv(qup,owf_u1b__1_5,owf_a_12) &
-         - f_fva(gncup(1),gncup(2),owf_u1b__1_5,owf_z_12))
-      owf_u1b__1_135 = pr_psibar(p135,mass(2),wd_tl(p135,width(2)),.false., &
-         - f_fv(qup,owf_u1b__1_5,owf_a_13) &
-         - f_fva(gncup(1),gncup(2),owf_u1b__1_5,owf_z_13))
-      owf_d1_1__126 = pr_psi(p126,mass(1),wd_tl(p126,width(1)),.false., &
-         - f_vf(qdwn,owf_a_12,owf_d1_1__6) &
-         - f_vaf(gncdwn(1),gncdwn(2),owf_z_12,owf_d1_1__6))
-      owf_d1_1__136 = pr_psi(p136,mass(1),wd_tl(p136,width(1)),.false., &
-         - f_vf(qdwn,owf_a_13,owf_d1_1__6) &
-         - f_vaf(gncdwn(1),gncdwn(2),owf_z_13,owf_d1_1__6))
+      owf_fu1b_o1_p125 = pr_psibar(p125,mass(2),wd_tl(p125,width(2)),.false., &
+         - f_fv(qup,owf_fu1b_o1_p5,owf_fa_p12) &
+         - f_fva(gncup(1),gncup(2),owf_fu1b_o1_p5,owf_fz_p12))
+      owf_fu1b_o1_p135 = pr_psibar(p135,mass(2),wd_tl(p135,width(2)),.false., &
+         - f_fv(qup,owf_fu1b_o1_p5,owf_fa_p13) &
+         - f_fva(gncup(1),gncup(2),owf_fu1b_o1_p5,owf_fz_p13))
+      owf_fd1_i1_p126 = pr_psi(p126,mass(1),wd_tl(p126,width(1)),.false., &
+         - f_vf(qdwn,owf_fa_p12,owf_fd1_i1_p6) &
+         - f_vaf(gncdwn(1),gncdwn(2),owf_fz_p12,owf_fd1_i1_p6))
+      owf_fd1_i1_p136 = pr_psi(p136,mass(1),wd_tl(p136,width(1)),.false., &
+         - f_vf(qdwn,owf_fa_p13,owf_fd1_i1_p6) &
+         - f_vaf(gncdwn(1),gncdwn(2),owf_fz_p13,owf_fd1_i1_p6))
   end subroutine compute_fusions_0002
   subroutine compute_brakets_0001 ()
-      oks_l1l1bl1n1bu1_1_d1b__1 = 0
-      oks_l1l1bl1n1bu1_1_d1b__1 = oks_l1l1bl1n1bu1_1_d1b__1 + owf_l1b_123*( &
-         - f_vlf(gcc,owf_wm_56,owf_n1_4))
-      oks_l1l1bl1n1bu1_1_d1b__1 = oks_l1l1bl1n1bu1_1_d1b__1 + ( &
-         + f_fvl(gcc,owf_l1b_2,owf_wm_56))*owf_n1_134
-      oks_l1l1bl1n1bu1_1_d1b__1 = oks_l1l1bl1n1bu1_1_d1b__1 + ( &
-         - f_fvl(gcc,owf_l1b_3,owf_wm_56))*owf_n1_124
-      oks_l1l1bl1n1bu1_1_d1b__1 = oks_l1l1bl1n1bu1_1_d1b__1 + owf_u1b__1_135* &
-        ( + f_vlf(gcc,owf_wp_24,owf_d1_1__6))
-      oks_l1l1bl1n1bu1_1_d1b__1 = oks_l1l1bl1n1bu1_1_d1b__1 + owf_u1b__1_125* &
-        ( - f_vlf(gcc,owf_wp_34,owf_d1_1__6))
-      oks_l1l1bl1n1bu1_1_d1b__1 = oks_l1l1bl1n1bu1_1_d1b__1 + ( &
-         + f_fvl(gcc,owf_u1b__1_5,owf_wp_24))*owf_d1_1__136
-      oks_l1l1bl1n1bu1_1_d1b__1 = oks_l1l1bl1n1bu1_1_d1b__1 + ( &
-         - f_fvl(gcc,owf_u1b__1_5,owf_wp_34))*owf_d1_1__126
-      oks_l1l1bl1n1bu1_1_d1b__1 = oks_l1l1bl1n1bu1_1_d1b__1 + owf_a_12*( &
-         + g_gg(iqw,owf_wm_56,p56,owf_wp_34,p34))
-      oks_l1l1bl1n1bu1_1_d1b__1 = oks_l1l1bl1n1bu1_1_d1b__1 + owf_a_13*( &
-         - g_gg(iqw,owf_wm_56,p56,owf_wp_24,p24))
-      oks_l1l1bl1n1bu1_1_d1b__1 = oks_l1l1bl1n1bu1_1_d1b__1 + owf_z_12*( &
-         + g_gg(igzww,owf_wm_56,p56,owf_wp_34,p34))
-      oks_l1l1bl1n1bu1_1_d1b__1 = oks_l1l1bl1n1bu1_1_d1b__1 + owf_z_13*( &
-         - g_gg(igzww,owf_wm_56,p56,owf_wp_24,p24))
-      oks_l1l1bl1n1bu1_1_d1b__1 = &
-         - oks_l1l1bl1n1bu1_1_d1b__1 ! 4 vertices, 3 propagators
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = 0
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+        oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 + owf_fl1b_p123*( &
+         - f_vlf(gcc,owf_fwm_p56,owf_fn1_p4))
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+        oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 + ( &
+         + f_fvl(gcc,owf_fl1b_p2,owf_fwm_p56))*owf_fn1_p134
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+        oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 + ( &
+         - f_fvl(gcc,owf_fl1b_p3,owf_fwm_p56))*owf_fn1_p124
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+        oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 + owf_fu1b_o1_p135*( &
+         + f_vlf(gcc,owf_fwp_p24,owf_fd1_i1_p6))
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+        oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 + owf_fu1b_o1_p125*( &
+         - f_vlf(gcc,owf_fwp_p34,owf_fd1_i1_p6))
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+        oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 + ( &
+         + f_fvl(gcc,owf_fu1b_o1_p5,owf_fwp_p24))*owf_fd1_i1_p136
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+        oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 + ( &
+         - f_fvl(gcc,owf_fu1b_o1_p5,owf_fwp_p34))*owf_fd1_i1_p126
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+        oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 + owf_fa_p12*( &
+         + g_gg(iqw,owf_fwm_p56,p56,owf_fwp_p34,p34))
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+        oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 + owf_fa_p13*( &
+         - g_gg(iqw,owf_fwm_p56,p56,owf_fwp_p24,p24))
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+        oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 + owf_fz_p12*( &
+         + g_gg(igzww,owf_fwm_p56,p56,owf_fwp_p34,p34))
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+        oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 + owf_fz_p13*( &
+         - g_gg(igzww,owf_fwm_p56,p56,owf_fwp_p24,p24))
+      oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 = &
+         - oks_fl1_fl1b_fl1_fn1b_fu1_i1_fd1b_o1 ! 4 vertices, 3 propagators
       ! unit symmetry factor
   end subroutine compute_brakets_0001
 

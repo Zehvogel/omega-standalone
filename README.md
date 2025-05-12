@@ -1,0 +1,1 @@
+A small minimum prototype to calculate O'Mega squared matrix element values at analysis runtime from C++ or Python (powered by ROOT).

@@ -61,3 +61,5 @@ class ModelParser():
 if __name__  == "__main__":
     model_parser = ModelParser("SM_ac.mdl")
     print(model_parser.get_parameters_dict())
+    model_parser.set_parameter("mW", 55.1337)
+    print(model_parser.get_parameters_dict())

@@ -1,3 +1,14 @@
 *.o
-*.so
+*.so*
+*.a
 *.mod
+*.smod
+*.lo
+*.la
+*.lai
+*.makefile
+*.phs
+*.vg
+*.pyc
+*.root
+*.slcio

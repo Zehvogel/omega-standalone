@@ -58,6 +58,11 @@ class ModelParser():
         self._update_derived()
 
 
+    def add_derived_parameter(self, name: str, expression: str):
+        self._raw_derived_parameters[name] = expression
+        self._update_derived()
+
+
 if __name__  == "__main__":
     model_parser = ModelParser("SM_ac.mdl")
     print(model_parser.get_parameters_dict())

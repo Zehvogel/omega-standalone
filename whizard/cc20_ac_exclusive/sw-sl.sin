@@ -1,0 +1,93 @@
+model = SM_ac
+?isr_handler = false
+#?vis_diags = true
+
+alias u_q = u:U
+alias d_q = d:D
+alias lep = e1:E1
+alias nu = n1:N1
+
+process ww = e1, E1 => (e1, N1, u, D) + (E1, n1, U, d)
+
+#luminosity = 500 #fb^-1
+n_events = 1000
+sqrts = 250
+
+# beams_pol_density = @(-1),@(1)
+# beams_pol_fraction = 1.0,1.0
+
+#iterations = 15:10000:"gw", 5:20000
+
+sample_format = lcio
+?unweighted = true
+
+?write_raw = false
+
+# 50 mrad cut, inner lumi cal cone so not visible anyway
+# ILD tracking acceptance cut 84 mrad
+cuts = all abs (cos (Theta)) < cos (84 mrad) [lep]
+
+compile
+integrate (ww)
+simulate (ww) {
+    # positive variations
+    alt_setup = {
+    g1z = 1.001
+    ka = 1.000
+    la = 0.000
+    kz = 1.0 - (ka - 1.0) * sw**2/cw**2 + (g1z - 1.0)
+    lz = la
+    }, {
+    g1z = 1.000
+    ka = 1.001
+    la = 0.000
+    kz = 1.0 - (ka - 1.0) * sw**2/cw**2 + (g1z - 1.0)
+    lz = la
+    }, {
+    g1z = 1.000
+    ka = 1.000
+    la = 0.001
+    kz = 1.0 - (ka - 1.0) * sw**2/cw**2 + (g1z - 1.0)
+    lz = la
+    },
+    # negative variations needed to kill squares
+    {
+    g1z = 0.999
+    ka = 1.000
+    la = 0.000
+    kz = 1.0 - (ka - 1.0) * sw**2/cw**2 + (g1z - 1.0)
+    lz = la
+    }, {
+    g1z = 1.000
+    ka = 0.999
+    la = 0.000
+    kz = 1.0 - (ka - 1.0) * sw**2/cw**2 + (g1z - 1.0)
+    lz = la
+    }, {
+    g1z = 1.000
+    ka = 1.000
+    la = -0.001
+    kz = 1.0 - (ka - 1.0) * sw**2/cw**2 + (g1z - 1.0)
+    lz = la
+    },
+    # mixed terms
+    {
+    g1z = 1.001
+    ka = 1.001
+    la = 0.000
+    kz = 1.0 - (ka - 1.0) * sw**2/cw**2 + (g1z - 1.0)
+    lz = la
+    }, {
+    g1z = 1.001
+    ka = 1.000
+    la = 0.001
+    kz = 1.0 - (ka - 1.0) * sw**2/cw**2 + (g1z - 1.0)
+    lz = la
+    }, {
+    g1z = 1.000
+    ka = 1.001
+    la = 0.001
+    kz = 1.0 - (ka - 1.0) * sw**2/cw**2 + (g1z - 1.0)
+    lz = la
+    }
+}

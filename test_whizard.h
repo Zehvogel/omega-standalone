@@ -19,12 +19,22 @@ void new_event(double* data)
     OMEGA_FUN(new_event)(data);
 }
 
+void new_event(std::vector<double> data)
+{
+    new_event(data.data());
+}
+
 void init_parameters(std::vector<double> pars)
 {
     int foo = 0;
     return OMEGA_FUN(init)(pars.data(), foo);
 }
 
+void new_event(std::vector<double> data, std::vector<double> pars)
+{
+    init_parameters(pars);
+    new_event(data);
+}
 
 std::complex<double> get_amplitude(int flv, int hel, int col)
 {

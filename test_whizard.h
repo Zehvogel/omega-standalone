@@ -6,12 +6,12 @@
 
 
 extern "C" {
-    void OMEGA_FUN(new_event)(double*);
+    void OMEGA_FUN(new_event)(const double*);
     void OMEGA_FUN(print_momenta)(double*);
     double _Complex OMEGA_FUN(get_amplitude)(int& flv, int& hel, int& col);
     double OMEGA_FUN(color_sum)(int& flv, int& hel);
     // void __parameters_sm_MOD_init_parameters(void);
-    void OMEGA_FUN(init)(double*, int& scheme);
+    void OMEGA_FUN(init)(const double*, int& scheme);
 }
 
 void new_event(double* data)

@@ -16,6 +16,11 @@ class OmegaWrapper {
     public:
     OmegaWrapper(const std::vector<double>& parameters) : m_parameters(parameters) {}
 
+    double operator()(std::vector<double> lvec, int flv)
+    {
+        return sqme(lvec.data(), flv);
+    }
+
     double sqme(double* lvec, int flv)
     {
         init_parameters();
@@ -30,14 +35,6 @@ class OmegaWrapper {
     }
 
 
-    double sqme1(std::vector<double> lvec) {
-        return sqme(lvec.data(), 1);
-    }
-
-    double sqme2(std::vector<double> lvec) {
-        return sqme(lvec.data(), 2);
-    }
-
     private:
     const std::vector<double> m_parameters;
     void init_parameters() {
@@ -49,12 +46,11 @@ class OmegaWrapper {
 };
 
 struct OmegaWrapperFunctor {
-    const int m_flv;
     OmegaWrapper m_omw;
 
-    OmegaWrapperFunctor(const int flv, OmegaWrapper omw) : m_flv(flv), m_omw(omw) {}
+    OmegaWrapperFunctor(OmegaWrapper omw) : m_omw(omw) {}
 
-    double operator()(std::vector<double> lvec) {
-        return m_omw.sqme(lvec.data(), m_flv);
+    double operator()(std::vector<double> lvec, int flv) {
+        return m_omw.sqme(lvec.data(), flv);
     } 
 };
